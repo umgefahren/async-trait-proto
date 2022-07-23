@@ -132,13 +132,10 @@ fn generate_method_impl(m: ImplItemMethod, items: &mut Vec<proc_macro2::TokenStr
     let mut self_lifetime = false;
 
     for arg in m.sig.inputs.iter() {
-        match arg {
-            FnArg::Receiver(ref r) => {
-                if let Some((_, None)) = &r.reference {
-                    self_lifetime = true;
-                }
+        if let FnArg::Receiver(ref r) = arg {
+            if let Some((_, None)) = &r.reference {
+                self_lifetime = true;
             }
-            _ => {}
         }
     }
     let output_type = match m.sig.output {
@@ -191,13 +188,10 @@ fn generate_method(m: TraitItemMethod, items: &mut Vec<proc_macro2::TokenStream>
     let mut self_lifetime = false;
 
     for arg in m.sig.inputs.iter() {
-        match arg {
-            FnArg::Receiver(ref r) => {
-                if let Some((_, None)) = &r.reference {
-                    self_lifetime = true;
-                }
+        if let FnArg::Receiver(ref r) = arg {
+            if let Some((_, None)) = &r.reference {
+                self_lifetime = true;
             }
-            _ => {}
         }
     }
     let output_type = match m.sig.output {

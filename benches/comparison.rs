@@ -105,18 +105,13 @@ pub fn criterion_benchmark(c: &mut Criterion) {
         })
         .map(SampleStruct::new);
 
-
-
-
-	c.bench_function("Dyn Trait", |b| {
+    c.bench_function("Dyn Trait", |b| {
         let runtime = tokio::runtime::Builder::new_current_thread()
             .build()
             .unwrap();
-		b.to_async(runtime)
-			.iter(|| dyn_test(black_box(&all_inputs[..])));
-	});
-
-
+        b.to_async(runtime)
+            .iter(|| dyn_test(black_box(&all_inputs[..])));
+    });
 
     c.bench_function("Fast Trait", |b| {
         let runtime = tokio::runtime::Builder::new_current_thread()
