@@ -1,0 +1,17 @@
+[package]
+name = "async_trait_proto"
+version = "0.0.1"
+authors = ["umgefahren <55623006+umgefahren@users.noreply.github.com>"]
+description = "Async traits using nightly features"
+keywords = ["async", "async-trait", "nightly"]
+edition = "2021"
+license = "Unlicense"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+quote = "1"
+proc-macro2 = "1.0"
+syn = { version = "1.0", features = ["full"] }
+
