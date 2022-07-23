@@ -1,4 +1,54 @@
+//! Async trait prototype using the desugarization described in [RFC 3185 Static Async Fn in Traits](https://rust-lang.github.io/rfcs/3185-static-async-fn-in-trait.html#equivalent-desugaring).
+//!
+//! It should be faster than [async-trait](https://crates.io/crates/async-trait) because it doesn't use allocations on every invocation and type erasure.
+//!
+//! Requires these feature flags and a **nightly compiler**:
+//! - `#![feature(generic_associated_types)]`
+//! - `#![feature(type_alias_impl_trait)]`
+//!
+//! ## Example
+//! ```
+//! #![feature(generic_associated_types)]
+//! #![feature(type_alias_impl_trait)]
+//!
+//! # use std::time::Duration;
+//! # use tokio::time::sleep;
+//! # use tokio::runtime::Builder;
+//! # let runtime = Builder::new_current_thread().build().unwrap();
+//!
+//! use async_trait_proto::async_trait_proto;
+//!
+//!
+//! struct Foo;
+//!
+//! #[async_trait_proto]
+//! trait Bar {
+//!     async fn wait(&self);
+//! }
+//!
+//! #[async_trait_proto]
+//! impl Bar for Foo {
+//!     async fn wait(&self) {
+//!         sleep(Duration::from_secs(10)).await;
+//!     }
+//! }
+//!
+
+//!
+//! # runtime.block_on(async move {
+//! # });
+//!
+//!
+//! ```
+
 extern crate proc_macro;
+
+#[rustversion::stable]
+compile_error!("macro only works on nightly toolchain, since the nightly features `generic_associated_types` and `type_alias_impl_trait` are necessary");
+
+#[rustversion::beta]
+compile_error!("macro only works on nightly toolchain, since the nightly features `generic_associated_types` and `type_alias_impl_trait` are necessary");
+
 use proc_macro::TokenStream;
 
 use quote::{quote, ToTokens};
