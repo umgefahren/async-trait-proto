@@ -6,7 +6,6 @@ description = "Async traits using nightly features"
 keywords = ["async", "async-trait", "nightly"]
 edition = "2021"
 license = "Unlicense"
-exclude = ["benches/*", "tests/*"]
 
 [lib]
 proc-macro = true
