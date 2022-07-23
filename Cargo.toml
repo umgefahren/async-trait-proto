@@ -1,6 +1,6 @@
 [package]
 name = "async_trait_proto"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["umgefahren <55623006+umgefahren@users.noreply.github.com>"]
 description = "Async traits using nightly features"
 keywords = ["async", "async-trait", "nightly"]
@@ -8,6 +8,7 @@ edition = "2021"
 license = "Unlicense"
 
 [lib]
+path = "src/lib.rs"
 proc-macro = true
 
 [dependencies]
@@ -23,9 +24,6 @@ criterion = { version = "0.3", features = ["async_tokio"] }
 async-trait = "0.1"
 rand = "0.8"
 tokio = { version = "1", features = ["rt", "time"]}
-
-
-
 
 [[bench]]
 name = "comparison"
