@@ -1,16 +1,19 @@
 #![feature(generic_associated_types)]
 #![feature(type_alias_impl_trait)]
+#![feature(test)]
 
 #[macro_use]
 extern crate async_trait_proto;
 #[macro_use]
 extern crate async_trait;
 
+extern crate test;
+
 use core::future::Future;
 use std::pin::Pin;
 use std::task::{Context, Poll};
-
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use test::Bencher;
+use test::black_box;
 
 struct SampleFuture {
     yielded: bool,
@@ -96,9 +99,9 @@ async fn fast_test<T: FastTrait>(inp: &[T]) {
     }
 }
 
-pub fn criterion_benchmark(c: &mut Criterion) {
+#[bench]
+fn bench_dyn(b: &mut Bencher) {
     let mut i = 100;
-
     let all_inputs = [0u8; 32]
         .map(|e| {
             i += 1;
@@ -106,22 +109,31 @@ pub fn criterion_benchmark(c: &mut Criterion) {
         })
         .map(SampleStruct::new);
 
-    c.bench_function("Dyn Trait", |b| {
-        let runtime = tokio::runtime::Builder::new_current_thread()
-            .build()
-            .unwrap();
-        b.to_async(runtime)
-            .iter(|| dyn_test(black_box(&all_inputs[..])));
-    });
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .build()
+        .unwrap();
 
-    c.bench_function("Fast Trait", |b| {
-        let runtime = tokio::runtime::Builder::new_current_thread()
-            .build()
-            .unwrap();
-        b.to_async(runtime)
-            .iter(|| fast_test(black_box(&all_inputs[..])));
+    b.iter(|| {
+       runtime.block_on(dyn_test(black_box(&all_inputs[..])));
     });
 }
 
-criterion_group!(benches, criterion_benchmark);
-criterion_main!(benches);
+#[bench]
+fn bench_fast(b: &mut Bencher) {
+    let mut i = 100;
+    let all_inputs = [0u8; 32]
+        .map(|e| {
+            i += 1;
+            e + 1
+        })
+        .map(SampleStruct::new);
+
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .build()
+        .unwrap();
+
+    b.iter(|| {
+        runtime.block_on(fast_test(black_box(&all_inputs[..])));
+    });
+}
+
