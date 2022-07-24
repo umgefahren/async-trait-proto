@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658669328327,
+  "lastUpdate": 1658669660166,
   "repoUrl": "https://github.com/umgefahren/async-trait-proto",
   "entries": {
     "Benchmark": [
@@ -71,6 +71,42 @@ window.BENCHMARK_DATA = {
             "name": "bench_fast",
             "value": 4463,
             "range": "± 47",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "55623006+umgefahren@users.noreply.github.com",
+            "name": "umgefahren",
+            "username": "umgefahren"
+          },
+          "committer": {
+            "email": "55623006+umgefahren@users.noreply.github.com",
+            "name": "umgefahren",
+            "username": "umgefahren"
+          },
+          "distinct": true,
+          "id": "0c1bc92100fb5c5646c17400cf4ea685f5fb3870",
+          "message": "prettified the readme",
+          "timestamp": "2022-07-24T15:32:54+02:00",
+          "tree_id": "77fa74a106dc564f4d24a13a23744ea8b1153ff2",
+          "url": "https://github.com/umgefahren/async-trait-proto/commit/0c1bc92100fb5c5646c17400cf4ea685f5fb3870"
+        },
+        "date": 1658669659425,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bench_dyn",
+            "value": 252380,
+            "range": "± 1748",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bench_fast",
+            "value": 4506,
+            "range": "± 48",
             "unit": "ns/iter"
           }
         ]
