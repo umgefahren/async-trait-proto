@@ -1,3 +1,5 @@
+name: Benchmark
+
 on:
   push:
     branches:
