@@ -1,6 +1,6 @@
 [package]
 name = "async_trait_proto"
-version = "0.0.2"
+version = "0.0.3"
 authors = ["umgefahren <55623006+umgefahren@users.noreply.github.com>"]
 description = "Async traits using nightly features"
 keywords = ["async", "async-trait", "nightly"]

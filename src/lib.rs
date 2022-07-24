@@ -2,6 +2,8 @@
 //!
 //! It should be faster than [async-trait](https://crates.io/crates/async-trait) because it doesn't use allocations on every invocation and type erasure.
 //!
+//! [Benchmark](https://umgefahren.github.io/async-trait-proto/dev/bench/)
+//!
 //! Requires these feature flags and a **nightly compiler**:
 //! - `#![feature(generic_associated_types)]`
 //! - `#![feature(type_alias_impl_trait)]`
