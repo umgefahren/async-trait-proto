@@ -18,7 +18,7 @@ jobs:
       - name: Install nightly
         run: rustup toolchain install nightly
       - name: Run benchmark
-        run: cargo +nightly bench | tree output.txt
+        run: cargo +nightly bench | tee output.txt
       - name: Download previous benchmark data
         uses: actions/cache@v1
         with:
