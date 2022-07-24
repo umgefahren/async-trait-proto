@@ -21,9 +21,10 @@ jobs:
         run: cargo +nightly build
       - name: Run tests
         run: cargo +nightly test
-      - name: Set Nightly
-        run: rustup override set nightly
-      - uses: boa-dev/criterion-compare-action@v3.0.0
+      - name: Run benchmark
+        run: cargo +nightly bench | tee output.txt
+      - name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
         with:
-          branchName: ${{ github.base_ref }}
-          token: ${{ secrets.GITHUB_TOKEN }}
+          tool: 'cargo'
+          output-file-path: output.txt
