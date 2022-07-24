@@ -204,7 +204,7 @@ fn generate_method(m: TraitItemMethod, items: &mut Vec<proc_macro2::TokenStream>
 
     let function = if self_lifetime {
         quote! {
-            #unsafety fn #ident(#inputs) -> Self::#ass_typ_name<'_>;
+            #unsafety fn #ident(#inputs) -> Self::#ass_typ_name<'_> #body;
         }
     } else {
         generics

@@ -23,7 +23,7 @@ rustversion = "1.0"
 criterion = { version = "0.3", features = ["async_tokio"] }
 async-trait = "0.1"
 rand = "0.8"
-tokio = { version = "1", features = ["rt", "time"]}
+tokio = { version = "1", features = ["rt", "time", "macros"]}
 
 [[bench]]
 name = "comparison"

@@ -52,15 +52,21 @@ trait FastTrait {
     async fn call_sample(&self) -> usize;
 }
 
-#[async_trait_proto]
-impl FastTrait for SampleStruct {
-    async fn call_sample(&self) -> usize {
-        for _ in 0..self.num {
+macro_rules! trait_impl_content {
+    ($self:ident) => {
+        for _ in 0..$self.num {
             let fut = SampleFuture::new();
             fut.await;
         }
         tokio::task::yield_now().await;
-        self.num as usize
+        return $self.num as usize;
+    };
+}
+
+#[async_trait_proto]
+impl FastTrait for SampleStruct {
+    async fn call_sample(&self) -> usize {
+        trait_impl_content!(self);
     }
 }
 
@@ -72,12 +78,7 @@ trait DynTrait {
 #[async_trait]
 impl DynTrait for SampleStruct {
     async fn call_sample(&self) -> usize {
-        for _ in 0..self.num {
-            let fut = SampleFuture::new();
-            fut.await;
-        }
-        tokio::task::yield_now().await;
-        self.num as usize
+        trait_impl_content!(self);
     }
 }
 
