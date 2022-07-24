@@ -12,11 +12,7 @@ Requires these feature flags and a **nightly compiler**:
 ```rust
 #![feature(generic_associated_types)]
 #![feature(type_alias_impl_trait)]
-
-
 use async_trait_proto::async_trait_proto;
-
-
 struct Foo;
 
 #[async_trait_proto]
@@ -30,10 +26,6 @@ impl Bar for Foo {
         sleep(Duration::from_secs(10)).await;
     }
 }
-
-
-
-
 ```
 
 License: Unlicense

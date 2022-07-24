@@ -10,15 +10,11 @@
 //! ```
 //! #![feature(generic_associated_types)]
 //! #![feature(type_alias_impl_trait)]
-//!
 //! # use std::time::Duration;
 //! # use tokio::time::sleep;
 //! # use tokio::runtime::Builder;
 //! # let runtime = Builder::new_current_thread().build().unwrap();
-//!
 //! use async_trait_proto::async_trait_proto;
-//!
-//!
 //! struct Foo;
 //!
 //! #[async_trait_proto]
@@ -32,13 +28,8 @@
 //!         sleep(Duration::from_secs(10)).await;
 //!     }
 //! }
-//!
-
-//!
 //! # runtime.block_on(async move {
 //! # });
-//!
-//!
 //! ```
 
 extern crate proc_macro;
