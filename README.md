@@ -35,4 +35,62 @@ impl Bar for Foo {
 }
 ```
 
+##### Send + Sync
+The trait definition can include attributes that indicate, that the resulting Future has to be
+Send and/or Sync. This is important when using the traits with work stealing schedulers like tokio.
+```rust
+#![feature(generic_associated_types)]
+#![feature(type_alias_impl_trait)]
+use async_trait_proto::async_trait_proto;
+struct Foo;
+
+#[async_trait_proto]
+trait Bar {
+    #[send]
+    async fn wait(&self);
+}
+
+#[async_trait_proto]
+impl Bar for Foo {
+    async fn wait(&self) {
+        todo!()
+    }
+}
+
+// this trait can now be used with tokio::spawn
+async fn spawn_trait<T: Bar + Sync + Send + 'static>(foo: T) {
+    let handle = tokio::spawn(async move {
+        foo.wait().await;
+    });
+    handle.await;
+}
+```
+
+On the other hand this will not compile:
+```compile_fail
+# #![feature(generic_associated_types)]
+# #![feature(type_alias_impl_trait)]
+# use async_trait_proto::async_trait_proto;
+# struct Foo;
+
+#[async_trait_proto]
+trait Bar {
+    async fn wait(&self);
+}
+
+# #[async_trait_proto]
+# impl Bar for Foo {
+#     async fn wait(&self) {
+#         todo!()
+#     }
+# }
+// this trait can not now be used with tokio::spawn
+async fn spawn_trait<T: Bar + Sync + Send + 'static>(foo: T) {
+    let handle = tokio::spawn(async move {
+        foo.wait().await;
+    });
+    handle.await;
+}
+```
+
 License: Unlicense
