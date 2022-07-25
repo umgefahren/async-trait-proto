@@ -38,6 +38,64 @@
 //! # runtime.block_on(async move {
 //! # });
 //! ```
+//!
+//! #### Send + Sync
+//! The trait definition can include attributes that indicate, that the resulting Future has to be
+//! Send and/or Sync. This is important when using the traits with work stealing schedulers like tokio.
+//! ```
+//! #![feature(generic_associated_types)]
+//! #![feature(type_alias_impl_trait)]
+//! use async_trait_proto::async_trait_proto;
+//! struct Foo;
+//!
+//! #[async_trait_proto]
+//! trait Bar {
+//!     #[send]
+//!     async fn wait(&self);
+//! }
+//!
+//! #[async_trait_proto]
+//! impl Bar for Foo {
+//!     async fn wait(&self) {
+//!         todo!()
+//!     }
+//! }
+//!
+//! // this trait can now be used with tokio::spawn
+//! async fn spawn_trait<T: Bar + Sync + Send + 'static>(foo: T) {
+//!     let handle = tokio::spawn(async move {
+//!         foo.wait().await;
+//!     });
+//!     handle.await;
+//! }
+//! ```
+//!
+//! On the other hand this will not compile:
+//! ```compile_fail
+//! # #![feature(generic_associated_types)]
+//! # #![feature(type_alias_impl_trait)]
+//! # use async_trait_proto::async_trait_proto;
+//! # struct Foo;
+//!
+//! #[async_trait_proto]
+//! trait Bar {
+//!     async fn wait(&self);
+//! }
+//!
+//! # #[async_trait_proto]
+//! # impl Bar for Foo {
+//! #     async fn wait(&self) {
+//! #         todo!()
+//! #     }
+//! # }
+//! // this trait can not now be used with tokio::spawn
+//! async fn spawn_trait<T: Bar + Sync + Send + 'static>(foo: T) {
+//!     let handle = tokio::spawn(async move {
+//!         foo.wait().await;
+//!     });
+//!     handle.await;
+//! }
+//! ```
 
 extern crate proc_macro;
 
@@ -51,10 +109,7 @@ use proc_macro::TokenStream;
 
 use quote::{quote, ToTokens};
 use syn::spanned::Spanned;
-use syn::{
-    parse_macro_input, FnArg, GenericParam, ImplItem, ImplItemMethod, Item, ItemImpl, ItemTrait,
-    Lifetime, LifetimeDef, ReturnType, TraitItem, TraitItemMethod,
-};
+use syn::{parse_macro_input, FnArg, GenericParam, ImplItem, ImplItemMethod, Item, ItemImpl, ItemTrait, Lifetime, LifetimeDef, ReturnType, TraitItem, TraitItemMethod};
 
 #[proc_macro_attribute]
 pub fn async_trait_proto(_args: TokenStream, input: TokenStream) -> TokenStream {
@@ -182,6 +237,27 @@ fn generate_method(m: TraitItemMethod, items: &mut Vec<proc_macro2::TokenStream>
         items.push(m.into_token_stream());
         return;
     }
+    let send_attr = m.attrs
+        .iter()
+        .any(|a| {
+            a.path.is_ident("send")
+        })
+        .then(|| {
+            quote! {
+                + Send
+            }
+        });
+    let sync_attr = m.attrs
+        .iter()
+        .any(|a| {
+            a.path.is_ident("sync")
+        })
+        .then(|| {
+            quote! {
+                + Sync
+            }
+        });
+
 
     let mut self_lifetime = false;
 
@@ -199,7 +275,7 @@ fn generate_method(m: TraitItemMethod, items: &mut Vec<proc_macro2::TokenStream>
 
     let ass_typ_name = associated_type(&m);
     let associated_type = quote! {
-        type #ass_typ_name<'a>: core::future::Future<Output = #output_type>
+        type #ass_typ_name<'a>: core::future::Future<Output = #output_type> #send_attr #sync_attr
         where
             Self: 'a;
     };
